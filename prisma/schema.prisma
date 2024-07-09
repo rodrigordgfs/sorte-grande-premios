@@ -9,6 +9,29 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model Campaign {
+  id          String   @id @default(uuid())
+  code        String   @unique
+  title       String
+  imageUrl    String
+  description String
+  quotaPrice  Decimal
+  drawDate    DateTime
+  quotaId     String
+  quota       Quota    @relation(fields: [quotaId], references: [id])
+
+  @@map("campaign")
+}
+
+model Quota {
+  id       String     @id @default(uuid())
+  quantity Int        @unique
+  Campaign Campaign[]
+
+  @@map("quota")
 }
